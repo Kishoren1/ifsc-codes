@@ -15,18 +15,24 @@ const updateMICRData = async () => {
     const filePath = path.join(dataDirectory, file);
     const fileData = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
-    let updatedData = [];
+    let micrCodes = [];
 
     Object.keys(fileData).forEach((key) => {
-      const micr = fileData[key].MICR;
-      const ifsc = fileData[key].IFSC;
+      const record = fileData[key];
+      const micr = record.MICR || null;
+      const ifsc = record.IFSC || null;
 
       if (micr && ifsc) {
-        updatedData.push([micr, ifsc]);
+        micrCodes.push([micr, ifsc]);
       }
     });
 
+    const updatedData = {
+      micrCodes: micrCodes,
+    };
+
     const updatedFilePath = path.join(outputDirectory, file);
+
     fs.writeFileSync(updatedFilePath, JSON.stringify(updatedData), "utf-8");
 
     console.log(`Updated file created: ${file}`);
